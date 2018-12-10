@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.app.cellstudio.presentation.interactor.viewmodel.MovieDetailsViewModel" />
+
+        <variable
+            name="model"
+            type="com.app.cellstudio.presentation.interactor.model.MoviePresentationModel" />
+
+        <variable
+            name="listener"
+            type="android.view.View.OnClickListener" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <RelativeLayout
+        android:id = "@+id/rl_details_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id = "@+id/tv_details_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{model.title}"
+            android:textSize="18sp"
+            tools:text="Hotel Transylvania 3: Summer Vacation"/>
+
+        <RatingBar
+            android:id="@+id/rb_details_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_details_title"
+            android:stepSize="0.01"
+            android:rating="@{model.rating.percentage}"
+            style="@style/Widget.AppCompat.RatingBar.Small"/>
+
+        <TextView
+            android:id = "@+id/tv_details_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rb_details_rating"
+            android:text = "@{model.yearRuntimeGenres}"
+            tools:text = "2018 • 148 min • Thriller"/>
+
+        <TextView
+            android:id = "@+id/tv_details_synopsis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_details_details"
+            android:text = "@{model.synopsis}"
+            tools:text = "@string/dummy_text"/>
+
+        <Button
+            android:id = "@+id/tv_details_trailer"
+            android:text = "@string/watch_trailer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_details_synopsis"
+            android:onClick="@{(v) -> viewModel.onWatchTrailerButtonClicked()}"/>
+
+    </RelativeLayout>
+
+</layout>

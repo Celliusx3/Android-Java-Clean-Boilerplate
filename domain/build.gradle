@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode VERSION_CODE
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+
+dependencies {
+    ext.RX_ANDROID_VERSION = '2.0.1'
+    ext.RX_JAVA_VERSION = '2.1.1'
+    ext.PAPER_PARCEL_VERSION = '2.0.1'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+
+    // RX - for composing asynchronous and event-based programs using observable sequences
+    implementation "io.reactivex.rxjava2:rxandroid:${RX_ANDROID_VERSION}"
+    implementation "io.reactivex.rxjava2:rxjava:${RX_JAVA_VERSION}"
+}
+
+repositories {
+    mavenCentral()
+}
