@@ -35,7 +35,8 @@
                 app:aspect_height="@integer/movie_thumbnail_ratio_height"
                 app:aspect_width="@integer/movie_thumbnail_ratio_width"
                 android:onClick="@{listener::onClick}"
-                android:src="@{model.images.poster}" />
+                android:src="@{model.images.poster}"
+                tools:src="@drawable/ic_broken_image_24dp"/>
             
             <RelativeLayout
                 android:layout_width="match_parent"

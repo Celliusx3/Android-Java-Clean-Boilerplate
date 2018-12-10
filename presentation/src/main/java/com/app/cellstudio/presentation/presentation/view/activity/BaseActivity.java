@@ -6,20 +6,22 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvider;
-import com.app.cellstudio.presentation.presentation.navigation.Navigator;
 import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
+import com.app.cellstudio.presentation.presentation.navigation.Navigator;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Scheduler;
@@ -30,23 +32,17 @@ import io.reactivex.Scheduler;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
 
-    private static final long DOUBLE_BACK_TO_EXIT_DURATION = 2000;
-
     @Inject
     Navigator navigator;
 
     @Inject
     BaseSchedulerProvider scheduler;
 
-//    @Nullable
-//    @BindView(R.id.toolbar)
-//    Toolbar toolbar;
+    @Nullable
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     private Unbinder unbinder;
-
-//    protected AlertDialog alertDialog;
-
-    private long backButtonLastPressedElapsedTime;
 
     protected abstract @LayoutRes
     int getLayoutResource();
@@ -69,8 +65,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     @Nullable
     public Toolbar getToolbar() {
-//        return toolbar;
-        return null;
+        return toolbar;
     }
 
     protected String getToolbarTitle() {
@@ -85,21 +80,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         onGetInputData(savedInstanceState);
         onInject();
         onBindView();
-
-//        if (getViewModels() != null) {
-//            for (ViewModel viewModel : getViewModels()) {
-//                viewModel.getInput().onCreateView();
-//
-//                ViewModel.Output output = viewModel.getOutput();
-//
-//                output.getShowToastMessage()
-//                        .compose(bindToLifecycle())
-//                        .observeOn(getUiScheduler())
-//                        .subscribe(this::showToastMessage);
-//            }
-//
-//        }
-
         onBindData(getRootView(), savedInstanceState);
     }
 
@@ -151,28 +131,11 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-//        if (getViewModels() != null) {
-//            for (ViewModel viewModel : getViewModels()) {
-//                viewModel.getInput().onAttachView();
-//            }
-//        }
-//        setViewModelViewEvent();
     }
-
-//    protected void setViewModelViewEvent() {
-//
-//    }
 
     @Override
     protected void onPause() {
         super.onPause();
-//
-//        if (getViewModels() != null) {
-//            for (ViewModel viewModel : getViewModels()) {
-//                viewModel.getInput().onDetachView();
-//            }
-//        }
     }
 
     @Override
@@ -212,6 +175,13 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     protected boolean isTablet() {
         return getResources().getBoolean(R.bool.is_tablet);
+    }
+
+    protected void setToolbarTitle(String title) {
+        Toolbar toolbar = getToolbar();
+        if (toolbar != null && !TextUtils.isEmpty(title)) {
+            toolbar.setTitle(title);
+        }
     }
 
 }
