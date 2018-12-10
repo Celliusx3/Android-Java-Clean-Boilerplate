@@ -5,6 +5,7 @@ import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
+import com.app.cellstudio.presentation.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.NetworkPolicy;
@@ -25,6 +26,12 @@ import io.reactivex.schedulers.Schedulers;
 public class PicassoImageLoader implements ImageLoader {
 
     private Context context;
+
+    @DrawableRes
+    private int resPlaceholder = R.drawable.ic_image_default_24dp;
+
+    @DrawableRes
+    private int resError = R.drawable.ic_broken_image_24dp;
 
     @Override
     public void init(Context context) {
@@ -56,8 +63,9 @@ public class PicassoImageLoader implements ImageLoader {
         Picasso.with(context)
                 .load(uri)
                 .fit()
-//                .centerCrop()
+                .placeholder(resPlaceholder)
                 .noFade()
+                .error(resError)
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -83,8 +91,10 @@ public class PicassoImageLoader implements ImageLoader {
         Picasso.with(context)
                 .load(uri)
                 .fit()
+                .placeholder(resPlaceholder)
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .noFade()
+                .error(resError)
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -123,7 +133,9 @@ public class PicassoImageLoader implements ImageLoader {
 
         Picasso.with(context)
                 .load(uri)
+                .placeholder(resPlaceholder)
                 .noFade()
+                .error(resError)
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -149,7 +161,9 @@ public class PicassoImageLoader implements ImageLoader {
                 .load(uri)
                 .fit()
                 .centerCrop()
+                .placeholder(resPlaceholder)
                 .noFade()
+                .error(resError)
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {

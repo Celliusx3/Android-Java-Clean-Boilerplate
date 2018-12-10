@@ -68,6 +68,12 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onBindView() {
+        super.onBindView();
+        setToolbarTitle("Home");
+    }
+
+    @Override
     protected void onBindData(View view, Bundle savedInstanceState) {
         super.onBindData(view, savedInstanceState);
 
@@ -95,7 +101,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupMoviesList(List<MoviePresentationModel> movies) {
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         rvMain.setLayoutManager(layoutManager);
         movieListAdapter = new MovieListAdapter(movies);
         rvMain.setAdapter(movieListAdapter);
