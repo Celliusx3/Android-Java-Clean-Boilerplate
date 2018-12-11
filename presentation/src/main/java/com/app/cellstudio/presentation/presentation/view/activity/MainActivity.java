@@ -3,19 +3,19 @@ package com.app.cellstudio.presentation.presentation.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.app.cellstudio.domain.entity.Page;
 import com.app.cellstudio.presentation.BaseApplication;
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.di.modules.MainModule;
-import com.app.cellstudio.presentation.interactor.model.MoviePresentationModel;
 import com.app.cellstudio.presentation.interactor.viewmodel.MainViewModel;
 import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
-import com.app.cellstudio.presentation.presentation.view.adapter.MovieListAdapter;
+import com.app.cellstudio.presentation.presentation.view.adapter.MainPagerAdapter;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,10 +34,14 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.rl_main)
     RelativeLayout rlMain;
 
-    @BindView(R.id.rv_main_item)
-    RecyclerView rvMain;
+    @BindView(R.id.main_vp_content)
+    ViewPager vpContent;
 
-    private MovieListAdapter movieListAdapter;
+    @BindView(R.id.bnv_main)
+    BottomNavigationView bnvMain;
+
+    private MainPagerAdapter mainPagerAdapter;
+    private List<Page> fragmentPages;
 
     public static Intent getCallingIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -70,56 +74,59 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onBindView() {
         super.onBindView();
-        setToolbarTitle("Home");
     }
 
     @Override
     protected void onBindData(View view, Bundle savedInstanceState) {
         super.onBindData(view, savedInstanceState);
 
-        mainViewModel.getMoviePages()
+        mainViewModel.getFragmentPages()
                 .compose(bindToLifecycle())
                 .subscribeOn(getIoScheduler())
                 .observeOn(getUiScheduler())
-                .subscribe(models -> {
-                    for (String model: models) {
-                        Log.d(TAG, model);
-                    }
+                .subscribe(pages -> {
+                    this.fragmentPages = pages;
+                    setupBottomNavigationView(fragmentPages);
+                    setupMainPagerAdapter(fragmentPages);
                 });
-
-        mainViewModel.getMoviePage()
-                .compose(bindToLifecycle())
-                .subscribeOn(getIoScheduler())
-                .observeOn(getUiScheduler())
-                .subscribe(this::setupMoviesList);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        subscribeSelectedMovie();
     }
 
-    private void setupMoviesList(List<MoviePresentationModel> movies) {
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        rvMain.setLayoutManager(layoutManager);
-        movieListAdapter = new MovieListAdapter(movies);
-        rvMain.setAdapter(movieListAdapter);
-        rvMain.setNestedScrollingEnabled(false);
-        subscribeSelectedMovie();
-    }
-
-    private void subscribeSelectedMovie() {
-        if (movieListAdapter == null)
+    private void setupBottomNavigationView(List<Page> pages) {
+        if (bnvMain == null)
             return;
 
-        // Switch Language
-        movieListAdapter.getSelectedMovie()
-                .compose(bindToLifecycle())
-                .observeOn(getUiScheduler())
-                .subscribe(selectedMovie -> {
-                    navigator.navigateToMovieDetails(this, selectedMovie);
-                },Throwable::printStackTrace);
+        Menu menu = bnvMain.getMenu();
+
+        for (Page page:pages) {
+            if (page.equals(Page.HomePage)) {
+                menu.add(Menu.NONE, page.getPageId(), Menu.NONE,
+                        page.getTitle()).setIcon(R.drawable.ic_home_white_24dp);
+            } else if (page.equals(Page.SettingsPage)) {
+                menu.add(Menu.NONE, page.getPageId(), Menu.NONE,
+                        page.getTitle()).setIcon(R.drawable.ic_settings_white_24dp);
+            } else {
+                menu.add(Menu.NONE, page.getPageId(), Menu.NONE,
+                        page.getTitle()).setIcon(R.drawable.ic_broken_image_24dp);
+            }
+        }
+
+        bnvMain.setOnNavigationItemSelectedListener(item -> {
+            this.setPage(item.getItemId());
+            return true;
+        });
     }
 
+    private void setPage (int pageId) {
+        vpContent.setCurrentItem(mainPagerAdapter.getPagePositionById(pageId));
+    }
+
+    private void setupMainPagerAdapter(List<Page> pages) {
+        mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), pages);
+        vpContent.setAdapter(mainPagerAdapter);
+    }
 }

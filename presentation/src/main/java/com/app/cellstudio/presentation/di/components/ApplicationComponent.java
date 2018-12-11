@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.app.cellstudio.presentation.BaseApplication;
 import com.app.cellstudio.presentation.di.modules.ApplicationModule;
+import com.app.cellstudio.presentation.di.modules.HomeModule;
 import com.app.cellstudio.presentation.di.modules.InteractorModule;
 import com.app.cellstudio.presentation.di.modules.MainModule;
 import com.app.cellstudio.presentation.di.modules.MovieDetailsModule;
@@ -24,5 +25,6 @@ public interface ApplicationComponent {
     Context getApplicationContext();
     void inject(BaseApplication baseApplication);
     MainComponent plus(MainModule mainModule);
+    HomeComponent plus(HomeModule homeModule);
     MovieDetailsComponent plus(MovieDetailsModule movieDetailsModule);
 }
