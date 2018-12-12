@@ -15,11 +15,7 @@ import com.app.cellstudio.presentation.databinding.ActivityMovieDetailsBinding;
 import com.app.cellstudio.presentation.di.modules.MovieDetailsModule;
 import com.app.cellstudio.presentation.interactor.model.MoviePresentationModel;
 import com.app.cellstudio.presentation.interactor.viewmodel.MovieDetailsViewModel;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.navigation.Navigator;
-
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -55,11 +51,6 @@ public class MovieDetailsActivity extends BaseActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_movie_details;
-    }
-
-    @Override
-    protected List<ViewModel> getViewModels() {
-        return Collections.singletonList(movieDetailsViewModel);
     }
 
     @Override

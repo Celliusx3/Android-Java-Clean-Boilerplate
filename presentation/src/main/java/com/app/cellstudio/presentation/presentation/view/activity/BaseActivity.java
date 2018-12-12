@@ -13,11 +13,8 @@ import android.view.View;
 
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvider;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.navigation.Navigator;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,8 +43,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     protected abstract @LayoutRes
     int getLayoutResource();
-
-    protected abstract List<ViewModel> getViewModels();
 
     protected abstract View getRootView();
 
