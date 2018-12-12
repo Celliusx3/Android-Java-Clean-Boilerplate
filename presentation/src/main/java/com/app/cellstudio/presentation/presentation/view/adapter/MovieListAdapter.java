@@ -2,7 +2,6 @@ package com.app.cellstudio.presentation.presentation.view.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,24 +20,36 @@ import io.reactivex.subjects.PublishSubject;
  * Created by coyan on 04/12/2018.
  */
 
-public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    public static final int VIEW_TYPE_MOVIE = 0;
+    public static final int VIEW_TYPE_LOADING = 1;
+
+    private boolean loading;
 
     private List<MoviePresentationModel> movies;
     private PublishSubject<MoviePresentationModel> selectedModel = PublishSubject.create();
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ListItemRailBinding binding;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
 
-        public ViewHolder(ListItemRailBinding binding) {
+        ViewHolder(ListItemRailBinding binding) {
             this(binding.getRoot());
             this.binding = binding;
         }
+    }
+
+    class LoadingViewHolder extends RecyclerView.ViewHolder {
+
+         LoadingViewHolder(View itemView) {
+            super(itemView);
+         }
     }
 
     public MovieListAdapter(List<MoviePresentationModel> movies) {
@@ -51,27 +62,68 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
 
 
     @Override
-    public MovieListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ListItemRailBinding binding = DataBindingUtil
-                .inflate(layoutInflater, R.layout.list_item_rail, parent, false);
-        return new MovieListAdapter.ViewHolder(binding);
+
+        switch (viewType) {
+            case VIEW_TYPE_LOADING:
+                View v2 = layoutInflater.inflate(R.layout.loading_bar, parent, false);
+                viewHolder = new LoadingViewHolder(v2);
+                break;
+            case VIEW_TYPE_MOVIE:
+            default:
+                ListItemRailBinding binding = DataBindingUtil
+                        .inflate(layoutInflater, R.layout.list_item_rail, parent, false);
+                viewHolder = new ViewHolder(binding);
+                break;
+        }
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final MovieListAdapter.ViewHolder holder, int position) {
-        holder.binding.setModel(movies.get(position));
-        holder.binding.setListener(v -> {
-            Log.d("Test", "Test");
-            int pos = holder.getAdapterPosition();
-            if (pos >= 0) {
-                selectedModel.onNext(movies.get(pos));
-            }
-        });
+    public void onBindViewHolder(final RecyclerView.ViewHolder baseHolder, int position) {
+        if (baseHolder instanceof ViewHolder) {
+            ViewHolder holder = (ViewHolder) baseHolder;
+            holder.binding.setModel(movies.get(position));
+            holder.binding.setListener(v -> {
+                int pos = holder.getAdapterPosition();
+                if (pos >= 0) {
+                    selectedModel.onNext(movies.get(pos));
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+
+        int size = movies.size();
+        return loading ? size + 1 : size;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (loading && position == getItemCount() - 1) {
+            return  VIEW_TYPE_LOADING;
+        }
+        return VIEW_TYPE_MOVIE;
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+        if (loading) {
+            notifyItemInserted(getItemCount() - 1);
+        } else {
+            notifyItemRemoved(getItemCount());
+        }
+    }
+
+    public void updateData(List<MoviePresentationModel> models) {
+        int start = this.movies.size();
+        this.movies.addAll(models);
+        int newItemCount = models.size();
+        notifyItemRangeInserted(start, newItemCount);
     }
 }

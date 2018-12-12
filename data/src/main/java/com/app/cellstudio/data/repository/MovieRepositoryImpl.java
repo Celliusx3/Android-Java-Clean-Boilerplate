@@ -30,8 +30,8 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
-    public Observable<List<Movie>> getMoviePage(int pageId) {
-        return getApiService().getMoviePage(pageId)
+    public Observable<List<Movie>> getMoviePage(String path) {
+        return getApiService().getMoviePage(path)
                 .flatMap(Observable::fromIterable)
                 .map(MovieDataEntityMapper::create)
                 .toList()

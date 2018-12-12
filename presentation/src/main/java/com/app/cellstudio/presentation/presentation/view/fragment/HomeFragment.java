@@ -14,6 +14,7 @@ import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvide
 import com.app.cellstudio.presentation.interactor.viewmodel.HomeViewModel;
 import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.view.adapter.MovieListAdapter;
+import com.app.cellstudio.presentation.presentation.view.component.OnEndlessScrollListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 
 public class HomeFragment extends BaseFragment {
 
@@ -39,6 +41,8 @@ public class HomeFragment extends BaseFragment {
     RecyclerView rvHome;
 
     private MovieListAdapter movieListAdapter;
+    private int currentMoviePageInIndex;
+    private List<String> moviePages;
 
     public static HomeFragment newInstance() {
         final Bundle args = new Bundle();
@@ -74,16 +78,33 @@ public class HomeFragment extends BaseFragment {
     protected void onBindData(View view) {
         super.onBindData(view);
 
-        homeViewModel.getMoviePage()
-                .compose(bindToLifecycle())
-                .subscribeOn(getIoScheduler())
-                .observeOn(getUiScheduler())
-                .subscribe(this::setupMoviesList);
+        homeViewModel.getMoviePages()
+            .compose(bindToLifecycle())
+            .subscribeOn(getIoScheduler())
+            .observeOn(getUiScheduler())
+            .subscribe(moviePages-> {
+                this.moviePages = moviePages;
+                this.currentMoviePageInIndex = 0;
+
+                this.getSpecificMoviePage(moviePages.get(currentMoviePageInIndex))
+                        .subscribe(this::setupMoviesList);
+            });
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        homeViewModel.isLoading()
+            .compose(bindToLifecycle())
+            .subscribeOn(getIoScheduler())
+            .observeOn(getUiScheduler())
+            .subscribe(isLoading-> {
+                if (this.movieListAdapter != null) {
+                    this.movieListAdapter.setLoading(isLoading);
+                }
+            });
+
         subscribeSelectedMovie();
     }
 
@@ -93,24 +114,53 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void setupMoviesList(List<MoviePresentationModel> movies) {
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        int spanCount = 2;
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch(movieListAdapter.getItemViewType(position)){
+                    case MovieListAdapter.VIEW_TYPE_MOVIE:
+                        return 1;
+                    case MovieListAdapter.VIEW_TYPE_LOADING:
+                        return spanCount; //number of columns of the grid
+                    default:
+                        return -1;
+                }
+            }
+        });
         rvHome.setLayoutManager(layoutManager);
         movieListAdapter = new MovieListAdapter(movies);
         rvHome.setAdapter(movieListAdapter);
         rvHome.setNestedScrollingEnabled(false);
+        rvHome.addOnScrollListener(new OnEndlessScrollListener() {
+            @Override
+            public void onLoadMore() {
+                currentMoviePageInIndex += 1;
+                if (currentMoviePageInIndex < moviePages.size()) {
+                    getSpecificMoviePage(moviePages.get(currentMoviePageInIndex))
+                        .subscribe(moviePage -> movieListAdapter.updateData(moviePage));
+                }
+            }
+        });
         subscribeSelectedMovie();
+
     }
 
     private void subscribeSelectedMovie() {
         if (movieListAdapter == null)
             return;
 
-        // Switch Language
         movieListAdapter.getSelectedMovie()
                 .compose(bindToLifecycle())
                 .observeOn(getUiScheduler())
-                .subscribe(selectedMovie -> {
-                    navigator.navigateToMovieDetails(getContext(), selectedMovie);
-                },Throwable::printStackTrace);
+                .subscribe(selectedMovie -> navigator.navigateToMovieDetails(getContext(), selectedMovie),Throwable::printStackTrace);
+    }
+
+    private Observable<List<MoviePresentationModel>> getSpecificMoviePage(String path) {
+        return homeViewModel.getMoviePage(path)
+                .compose(bindToLifecycle())
+                .subscribeOn(getIoScheduler())
+                .observeOn(getUiScheduler());
     }
 }

@@ -16,6 +16,6 @@ public interface ApiService {
     @GET(ApiRoutes.MOVIE)
     Observable<List<String>> getMoviePages();
 
-    @GET(ApiRoutes.MOVIE + "/{pageNumber}")
-    Observable<List<MovieDataModel>> getMoviePage(@Path("pageNumber")int pageNumber);
+    @GET("{path}")
+    Observable<List<MovieDataModel>> getMoviePage(@Path("path")String path);
 }
