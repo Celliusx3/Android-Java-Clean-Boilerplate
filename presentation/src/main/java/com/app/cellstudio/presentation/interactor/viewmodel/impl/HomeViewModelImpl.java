@@ -10,13 +10,15 @@ import com.app.cellstudio.presentation.interactor.viewmodel.HomeViewModel;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by coyan on 11/12/2018.
  */
 
 public class HomeViewModelImpl extends BaseViewModel implements HomeViewModel {
-    protected final MovieInteractor movieInteractor;
+    private final MovieInteractor movieInteractor;
+    private PublishSubject<Boolean> isLoading = PublishSubject.create();
 
     public HomeViewModelImpl(MovieInteractor movieInteractor, BaseSchedulerProvider scheduler) {
         super(scheduler);
@@ -26,15 +28,24 @@ public class HomeViewModelImpl extends BaseViewModel implements HomeViewModel {
 
     @Override
     public Observable<List<String>> getMoviePages() {
-        return movieInteractor.getPages();
+        isLoading.onNext(true);
+        return movieInteractor.getMoviePages()
+                .doFinally(() -> isLoading.onNext(false));
     }
 
     @Override
-    public Observable<List<MoviePresentationModel>> getMoviePage() {
-        return movieInteractor.getPage(1)
+    public Observable<List<MoviePresentationModel>> getMoviePage(String path) {
+        isLoading.onNext(true);
+        return movieInteractor.getMoviePage(path)
                 .flatMap(Observable::fromIterable)
                 .map(MoviePresentationModelMapper::create)
                 .toList()
-                .toObservable();
+                .toObservable()
+                .doFinally(() -> isLoading.onNext(false));
+    }
+
+    @Override
+    public Observable<Boolean> isLoading() {
+        return isLoading;
     }
 }

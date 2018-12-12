@@ -11,6 +11,6 @@ import io.reactivex.Observable;
  */
 
 public interface MovieInteractor {
-    Observable<List<String>> getPages();
-    Observable<List<Movie>> getPage(int pageId);
+    Observable<List<String>> getMoviePages();
+    Observable<List<Movie>> getMoviePage(String path);
 }

@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rl_home"
-    tools:context="com.app.cellstudio.presentation.presentation.view.fragment.HomeFragment">
+    android:id="@+id/rl_home">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_home_item"
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:nestedScrollingEnabled="false"
-        tools:listitem="@layout/list_item_rail"
         tools:targetApi="lollipop" />
 
 </RelativeLayout>
+

@@ -12,5 +12,6 @@ import io.reactivex.Observable;
 
 public interface HomeViewModel extends ViewModel {
     Observable<List<String>> getMoviePages();
-    Observable<List<MoviePresentationModel>> getMoviePage();
+    Observable<List<MoviePresentationModel>> getMoviePage(String path);
+    Observable<Boolean> isLoading();
 }

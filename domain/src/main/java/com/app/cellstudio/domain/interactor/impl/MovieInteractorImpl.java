@@ -21,12 +21,12 @@ public class MovieInteractorImpl implements MovieInteractor {
     }
 
     @Override
-    public Observable<List<String>> getPages() {
+    public Observable<List<String>> getMoviePages() {
         return movieRepository.getMoviePages();
     }
 
     @Override
-    public Observable<List<Movie>> getPage(int pageId) {
-        return movieRepository.getMoviePage(pageId);
+    public Observable<List<Movie>> getMoviePage(String path) {
+        return movieRepository.getMoviePage(path);
     }
 }
