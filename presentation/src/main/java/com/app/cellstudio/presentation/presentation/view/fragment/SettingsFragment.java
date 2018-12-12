@@ -1,18 +1,17 @@
 package com.app.cellstudio.presentation.presentation.view.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvider;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class SettingsFragment extends BaseFragment {
 
@@ -37,11 +36,6 @@ public class SettingsFragment extends BaseFragment {
     }
 
     @Override
-    protected List<ViewModel> getViewModels() {
-        return null;
-    }
-
-    @Override
     protected void onBindView(View view) {
         super.onBindView(view);
     }
@@ -63,5 +57,18 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @OnClick(R.id.rl_settings_credits)
+    public void onCreditsClicked() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setMessage("Thank you for supporting us.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    if (null != dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
     }
 }

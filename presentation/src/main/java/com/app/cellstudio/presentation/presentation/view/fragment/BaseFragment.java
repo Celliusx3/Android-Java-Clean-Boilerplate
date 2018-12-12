@@ -8,11 +8,8 @@ import android.view.ViewGroup;
 
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvider;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.navigation.Navigator;
 import com.trello.rxlifecycle2.components.support.RxFragment;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -41,8 +38,6 @@ public abstract class BaseFragment extends RxFragment {
     protected abstract @LayoutRes
     int getLayoutResource();
 
-    protected abstract List<ViewModel> getViewModels();
-
     public Observable<Boolean> getCurrentUserVisibleHint() {
         return currentUserVisibleHint;
     }
@@ -67,8 +62,7 @@ public abstract class BaseFragment extends RxFragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
 
-        View inflate = inflater.inflate(getLayoutResource(), container, false);
-        return inflate;
+        return inflater.inflate(getLayoutResource(), container, false);
     }
 
     @Override

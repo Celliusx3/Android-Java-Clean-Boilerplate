@@ -12,11 +12,9 @@ import com.app.cellstudio.presentation.di.modules.HomeModule;
 import com.app.cellstudio.presentation.interactor.model.MoviePresentationModel;
 import com.app.cellstudio.presentation.interactor.scheduler.BaseSchedulerProvider;
 import com.app.cellstudio.presentation.interactor.viewmodel.HomeViewModel;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.view.adapter.MovieListAdapter;
 import com.app.cellstudio.presentation.presentation.view.component.OnEndlessScrollListener;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,11 +52,6 @@ public class HomeFragment extends BaseFragment {
     @Override
     protected int getLayoutResource() {
         return R.layout.fragment_home;
-    }
-
-    @Override
-    protected List<ViewModel> getViewModels() {
-        return Collections.singletonList(homeViewModel);
     }
 
     @Override

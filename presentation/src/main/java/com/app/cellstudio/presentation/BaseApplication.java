@@ -26,12 +26,6 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//
-//        singleton = this;
-//        mApplicationComponent = DaggerApplicationComponent.builder()
-//                .applicationModule(new ApplicationModule(this))
-//                .build();
-//        mApplicationComponent.inject(this);
         synchronized (mLock) {
             singleton = this;
             mApplicationComponent = DaggerApplicationComponent.builder()

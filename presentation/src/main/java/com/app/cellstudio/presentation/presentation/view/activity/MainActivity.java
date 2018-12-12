@@ -14,10 +14,8 @@ import com.app.cellstudio.presentation.BaseApplication;
 import com.app.cellstudio.presentation.R;
 import com.app.cellstudio.presentation.di.modules.MainModule;
 import com.app.cellstudio.presentation.interactor.viewmodel.MainViewModel;
-import com.app.cellstudio.presentation.interactor.viewmodel.ViewModel;
 import com.app.cellstudio.presentation.presentation.view.adapter.MainPagerAdapter;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,11 +50,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_main;
-    }
-
-    @Override
-    protected List<ViewModel> getViewModels() {
-        return Collections.singletonList(mainViewModel);
     }
 
     @Override
